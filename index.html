@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolChest - Master Tool Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .search-filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .tool-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.25rem;
+        }
+
+        .company-name {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .affiliate-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .category-info {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .category {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.25rem;
+        }
+
+        .subcategory {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .tool-description {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .pricing-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-title {
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-range {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .cta-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cta-button {
+            flex: 1;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.02);
+        }
+
+        .commission-info {
+            font-size: 0.8rem;
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .stats-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            background: #1a202c;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+            }
+            
+            .cta-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>🧰 ToolChest</h1>
+                <p class="subtitle">The comprehensive directory of business tools, apps, and services that everyone's talking about but no one has time to research properly</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-filter-section">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search tools by name, company, or description...">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">All Tools</button>
+                <button class="filter-btn" data-category="crm">🎯 CRM & Sales</button>
+                <button class="filter-btn" data-category="ecommerce">🛍 E-commerce</button>
+                <button class="filter-btn" data-category="automation">🔄 Automation</button>
+            </div>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Tools will be populated by JavaScript -->
+        </div>
+
+        <div class="stats-section">
+            <h2 style="margin-bottom: 2rem; color: #1a202c;">ToolChest by the Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <span class="stat-number">6</span>
+                    <div class="stat-label">High-Priority Tools</div>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">Affiliate Coverage</div>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">800+</span>
+                    <div class="stat-label">Tools Coming Soon</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ToolChest. Turn overwhelming choices into confident decisions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tool database
+        const tools = [
+            {
+                name: "Shopify",
+                company: "Shopify Inc.",
+                category: "🛍 E-commerce & Business Tools",
+                subcategory: "E-commerce Platforms",
+                description: "Complete e-commerce solution with unlimited products, multi-channel selling, built-in payment processing, and point-of-sale system. Perfect for businesses of all sizes.",
+                pricing: "Starter $5/mo - Plus $2,300/mo",
+                affiliateCommission: "200% of first month ($58-$116)",
+                affiliateUrl: "#shopify-affiliate", // Replace with actual affiliate links
+                categorySlug: "ecommerce",
+                features: ["Unlimited products", "Multi-channel selling", "Built-in payments", "POS system", "8,000+ apps"]
+            },
+            {
+                name: "HubSpot",
+                company: "HubSpot Inc.",
+                category: "🎯 CRM & Sales Tools",
+                subcategory: "Customer Relationship Management",
+                description: "All-in-one CRM platform with marketing automation, sales tools, and customer service. Includes free CRM with up to 1 million contacts.",
+                pricing: "Free - Enterprise $3,600/mo",
+                affiliateCommission: "$500-$1,000 per enterprise sale",
+                affiliateUrl: "#hubspot-affiliate",
+                categorySlug: "crm",
+                features: ["Free CRM", "Marketing automation", "Sales sequences", "Customer service tools", "Analytics"]
+            },
+            {
+                name: "ConvertKit",
+                company: "ConvertKit LLC",
+                category: "🎯 CRM & Sales Tools",
+                subcategory: "Email Marketing & Automation",
+                description: "Creator-focused email marketing platform with advanced automation, visual automation builder, and 70+ integrations. Built for bloggers, podcasters, and content creators.",
+                pricing: "Free - Pro $59/mo",
+                affiliateCommission: "30% recurring monthly",
+                affiliateUrl: "#convertkit-affiliate",
+                categorySlug: "crm",
+                features: ["Visual automation", "Creator-focused", "70+ integrations", "Landing pages", "Commerce features"]
+            },
+            {
+                name: "Klaviyo",
+                company: "Klaviyo Inc.",
+                category: "🎯 CRM & Sales Tools",
+                subcategory: "Email Marketing & Automation",
+                description: "Powerful e-commerce email and SMS marketing platform with advanced segmentation, predictive analytics, and deep e-commerce integrations.",
+                pricing: "Free - Custom pricing",
+                affiliateCommission: "25% of first month",
+                affiliateUrl: "#klaviyo-affiliate",
+                categorySlug: "crm",
+                features: ["Email & SMS", "Predictive analytics", "E-commerce integration", "Advanced segmentation", "A/B testing"]
+            },
+            {
+                name: "ClickFunnels",
+                company: "Etison LLC",
+                category: "🎯 CRM & Sales Tools",
+                subcategory: "Sales & Outreach Tools",
+                description: "Complete sales funnel builder with drag-and-drop editor, landing pages, email automation, and membership sites. No coding required.",
+                pricing: "Startup $97/mo - Pro $297/mo",
+                affiliateCommission: "40% commission",
+                affiliateUrl: "#clickfunnels-affiliate",
+                categorySlug: "crm",
+                features: ["Drag-and-drop builder", "Unlimited funnels", "Email automation", "A/B testing", "Membership sites"]
+            },
+            {
+                name: "Zapier",
+                company: "Zapier Inc.",
+                category: "🔄 Automation & Workflows",
+                subcategory: "Workflow Automation",
+                description: "Connect 7,000+ apps with no-code automation. Create multi-step workflows, use AI features, and automate repetitive tasks across your entire tech stack.",
+                pricing: "Free - Enterprise $99/mo",
+                affiliateCommission: "$50-$200 per signup",
+                affiliateUrl: "#zapier-affiliate",
+                categorySlug: "automation",
+                features: ["7,000+ app integrations", "Multi-step workflows", "AI-powered features", "Team collaboration", "Premium apps"]
+            }
+        ];
+
+        // DOM elements
+        const toolsGrid = document.getElementById('toolsGrid');
+        const searchBox = document.getElementById('searchBox');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        // State
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        // Render tools
+        function renderTools(toolsToRender = tools) {
+            toolsGrid.innerHTML = toolsToRender.map(tool => `
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div>
+                            <div class="tool-name">${tool.name}</div>
+                            <div class="company-name">${tool.company}</div>
+                        </div>
+                        <div class="affiliate-badge">High Commission</div>
+                    </div>
+                    
+                    <div class="category-info">
+                        <div class="category">${tool.category}</div>
+                        <div class="subcategory">${tool.subcategory}</div>
+                    </div>
+                    
+                    <div class="tool-description">${tool.description}</div>
+                    
+                    <div class="pricing-section">
+                        <div class="pricing-title">Pricing</div>
+                        <div class="pricing-range">${tool.pricing}</div>
+                    </div>
+                    
+                    <div class="cta-section">
+                        <a href="${tool.affiliateUrl}" class="cta-button" target="_blank">
+                            Learn More & Get Started
+                        </a>
+                        <div class="commission-info">${tool.affiliateCommission}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter and search functionality
+        function filterAndSearch() {
+            let filteredTools = tools;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filteredTools = filteredTools.filter(tool => tool.categorySlug === currentFilter);
+            }
+            
+            // Apply search filter
+            if (currentSearch) {
+                filteredTools = filteredTools.filter(tool => 
+                    tool.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    tool.company.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    tool.description.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    tool.category.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+            }
+            
+            renderTools(filteredTools);
+        }
+
+        // Event listeners
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                filterAndSearch();
+            });
+        });
+
+        searchBox.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            filterAndSearch();
+        });
+
+        // Initial render
+        renderTools();
+    </script>
+</body>
+</html>
